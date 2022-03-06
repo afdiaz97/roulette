@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using roulette.Models;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace roulette.Controllers
 {
@@ -43,9 +45,7 @@ namespace roulette.Controllers
 
         
 
-        // POST: api/Roulettes
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+       [HttpPost]
         public async Task<ActionResult<Roulette>> PostRoulette()
         {
             Roulette roulette = new Roulette();
@@ -54,6 +54,32 @@ namespace roulette.Controllers
             await _context.SaveChangesAsync();
 
             return  roulette;
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutRoulette(long id)
+        {
+            
+                if (!RouletteExists(id))
+                {
+                    return NotFound();
+                }
+            var roulette = await _context.Roulettes.FindAsync(id);
+            roulette.Status = "open";
+            try
+            {
+                await _context.SaveChangesAsync();
+                string status = "ruleta abierta";
+                return Content(status);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return NoContent();
+            }
+        }
+        private bool RouletteExists(long id)
+        {
+            return _context.Roulettes.Any(e => e.Id == id);
         }
     }
 }
