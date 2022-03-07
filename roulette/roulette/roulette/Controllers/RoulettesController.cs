@@ -81,5 +81,70 @@ namespace roulette.Controllers
         {
             return _context.Roulettes.Any(e => e.Id == id);
         }
+        [HttpPost("betcolor/{idRoulette}/{money}/{color}")]
+        public async Task<ActionResult<Bet>> PostBet(long idRoulette,int money,string color)
+        {
+            if (!RouletteExists(idRoulette))
+            {
+                string status = "ruleta no existe";
+                return Content(status);
+            }
+            var roulette = await _context.Roulettes.FindAsync(idRoulette);
+            if (roulette.Status == "close")
+            {
+                string status = "ruleta cerrada";
+                return Content(status);
+            }
+            if (money > 10000)
+            {
+                string status = "Apuesta mayor a lo permitida";
+                return Content(status);
+            }
+            if (color != "rojo" && color != "negro")
+            {
+                string status = "Color no valido";
+                return Content(status);
+            }
+            Bet bet = new Bet();
+            bet.number = 100;
+            bet.money = money;
+            bet.color = color;
+
+            _context.Bets.Add(bet);
+            await _context.SaveChangesAsync();
+            return bet;
+        }
+        [HttpPost("betnumber/{idRoulette}/{money}/{number}")]
+        public async Task<ActionResult<Bet>> PostBetcolor(long idRoulette, int money, int number)
+        {
+            if (!RouletteExists(idRoulette))
+            {
+                string status = "ruleta no existe";
+                return Content(status);
+            }
+            var roulette = await _context.Roulettes.FindAsync(idRoulette);
+            if (roulette.Status == "close")
+            {
+                string status = "ruleta cerrada";
+                return Content(status);
+            }
+            if (money > 10000)
+            {
+                string status = "Apuesta mayor a lo permitida";
+                return Content(status);
+            }
+            if (number <0 || number >36)
+            {
+                string status = "Numero no valido";
+                return Content(status);
+            }
+            Bet bet = new Bet();
+            bet.number = number;
+            bet.money = money;
+
+            _context.Bets.Add(bet);
+            await _context.SaveChangesAsync();
+            return bet;
+        }
     }
 }

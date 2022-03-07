@@ -32,6 +32,8 @@ namespace roulette
             services.AddControllers();
             services.AddDbContext<RouletteContext>(opt =>
                 opt.UseInMemoryDatabase("Roulettelist"));
+            services.AddDbContext<RouletteContext>(opt =>
+                opt.UseInMemoryDatabase("BetList"));
             //services.AddSwaggerGen(c =>
             //{
             //    c.SwaggerDoc("v1", new OpenApiInfo { Title = "roulette", Version = "v1" });
